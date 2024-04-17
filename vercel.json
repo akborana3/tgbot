@@ -1,0 +1,11 @@
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    { "src": "backend/**/*", "use": "@vercel/node" },
+    { "src": "frontend/**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/evaluate", "dest": "backend/index.js" }
+  ]
+}
