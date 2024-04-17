@@ -1,4 +1,3 @@
-// backend/index.js
 const { Telegraf } = require('telegraf');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,6 +6,13 @@ const { exec } = require('child_process');
 const app = express();
 const bot = new Telegraf('2136045481:AAFfO1sp7DJqt15mgjP7BoiUZSAcfip2cyo');
 
+// Logging middleware
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
+// Bot commands and launch
 bot.start((ctx) => ctx.reply('Welcome! Send me some JavaScript code to evaluate.'));
 
 bot.command('eval', async (ctx) => {
@@ -49,7 +55,16 @@ app.post('/evaluate', (req, res) => {
     });
 });
 
+// Endpoint to ping the Telegram bot
+app.get('/ping', (req, res) => {
+    bot.telegram.getMe().then((botInfo) => {
+        res.json({ botInfo });
+    }).catch((error) => {
+        res.status(500).json({ error: 'Failed to ping Telegram bot.' });
+    });
+});
+
 // Start the Express server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-        
+    
